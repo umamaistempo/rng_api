@@ -21,7 +21,7 @@ defmodule RngApi.Users.User do
     |> Changeset.change()
   end
 
-  @type modify(t | Changeset.t(t), map) :: Changeset.t(t)
+  @spec modify(t | Changeset.t(t), map) :: Changeset.t(t)
   @doc """
   Modifies an existing user.
 
@@ -32,8 +32,8 @@ defmodule RngApi.Users.User do
   """
   def modify(user, attrs) do
     user
-    |> cast(attrs, [:points])
-    |> validate_number(:points, greater_than_or_equal_to: 0, less_than_or_equal_to: 100)
-    |> validate_required([:points])
+    |> Changeset.cast(attrs, [:points])
+    |> Changeset.validate_number(:points, greater_than_or_equal_to: 0, less_than_or_equal_to: 100)
+    |> Changeset.validate_required([:points])
   end
 end

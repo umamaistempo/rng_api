@@ -27,7 +27,7 @@ defmodule RngApi.Users do
     - `random` - Will sort the resultset randomly.
     - `{:limit, value}` where `value` is an integer. Will limit the size of the resultset.
   """
-  def find_users(query, options) do
+  def find_users(query, options \\ []) do
     User
     |> users_query(query)
     |> users_query_options(options)

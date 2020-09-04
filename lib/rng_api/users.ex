@@ -66,6 +66,9 @@ defmodule RngApi.Users do
     end)
   end
 
+  defp users_query(query, :all),
+    do: query
+
   defp users_query(query, {:points, :>=, value}),
     do: where(query, [u], u.points >= ^value)
 

@@ -1,12 +1,14 @@
 defmodule RngApi.NumberGenerator do
+  use GenServer
+
   alias RngApi.Users
   alias RngApi.Users.User
 
-  @spec start_link() :: GenServer.on_start()
-  def start_link(),
+  @spec start_link(any) :: GenServer.on_start()
+  def start_link(_),
     do: GenServer.start_link(__MODULE__, [], name: __MODULE__)
 
-  @spec run() :: {Time.t() | nil, [User.t()]}
+  @spec run() :: {DateTime.t() | nil, [User.t()]}
   def run(),
     do: GenServer.call(__MODULE__, :run)
 
@@ -16,7 +18,7 @@ defmodule RngApi.NumberGenerator do
 
     timestamp = nil
     last_result = {nil, []}
-    {max_number(), timestamp, last_result}
+    {:ok, {max_number(), timestamp, last_result}}
   end
 
   @doc false
@@ -39,7 +41,7 @@ defmodule RngApi.NumberGenerator do
     do: Enum.random(0..100)
 
   defp now(),
-    do: Time.utc_now()
+    do: DateTime.utc_now()
 
   defp schedule_recurring_updates(),
     do: :timer.apply_interval(60_000, GenServer, :cast, [self(), :update])

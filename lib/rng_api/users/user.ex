@@ -4,6 +4,8 @@ defmodule RngApi.Users.User do
 
   @type t :: %__MODULE__{}
 
+  @derive {Jason.Encoder, only: [:id, :points, :inserted_at, :updated_at]}
+
   @primary_key {:id, :id, autogenerate: true}
 
   schema "users" do

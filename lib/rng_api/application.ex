@@ -13,6 +13,7 @@ defmodule RngApi.Application do
       RngApiWeb.Telemetry,
       # Start the PubSub system
       {Phoenix.PubSub, name: RngApi.PubSub},
+      RngApi.NumberGenerator,
       # Start the Endpoint (http/https)
       RngApiWeb.Endpoint
       # Start a worker by calling: RngApi.Worker.start_link(arg)

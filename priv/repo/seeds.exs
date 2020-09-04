@@ -10,7 +10,7 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
-Enum.reduce(1..100, fn _ ->
+Enum.reduce(1..100, nil, fn _, _ ->
   user = RngApi.Users.User.create()
-  RngApi.Repo.create!(user)
+  RngApi.Repo.insert!(user)
 end)

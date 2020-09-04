@@ -8,7 +8,7 @@ defmodule RngApi.Users do
   alias RngApi.Users.User
 
   @type find_query ::
-          {:points, :>=, integer}
+          {:points, :>, integer}
           | :all
 
   @type find_option ::
@@ -20,7 +20,7 @@ defmodule RngApi.Users do
   Fetches records of `RngApi.Users.User`.
 
   `query` can be any of:
-    - `{:points, :>=, value}` where `value` is an integer. This will fetch users whose `points` is bigger than or equals to `value`.
+    - `{:points, :>, value}` where `value` is an integer. This will fetch users whose `points` is bigger than `value`.
     - `:all`. Fetches all users on database
 
   Additionally, the following `options` can be provided:
@@ -69,8 +69,8 @@ defmodule RngApi.Users do
   defp users_query(query, :all),
     do: query
 
-  defp users_query(query, {:points, :>=, value}),
-    do: where(query, [u], u.points >= ^value)
+  defp users_query(query, {:points, :>, value}),
+    do: where(query, [u], u.points > ^value)
 
   defp users_query_options(query, [:random | options]) do
     query

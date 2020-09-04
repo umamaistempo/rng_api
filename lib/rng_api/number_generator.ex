@@ -97,5 +97,5 @@ defmodule RngApi.NumberGenerator do
   end
 
   defp fetch_selected_random_users(max),
-    do: Users.find_users({:points, :>=, max}, [:random, limit: 2])
+    do: Users.find_users({:points, :>, max}, [:random, limit: 2])
 end

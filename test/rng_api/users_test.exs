@@ -17,7 +17,7 @@ defmodule RngApi.UsersTest do
     assert 100 == Enum.count(result)
   end
 
-  test "find_users/2 using `{:point, :>=, value}` fetches only records with points bigger than or equal to value" do
+  test "find_users/2 using `{:point, :>, value}` fetches only records with points bigger than the value" do
     Enum.each(1..100, fn _ ->
       User.create()
       |> Ecto.Changeset.put_change(:points, 80)
@@ -34,10 +34,10 @@ defmodule RngApi.UsersTest do
       |> Repo.insert!()
     end)
 
-    result = Users.find_users({:points, :>=, 90})
+    result = Users.find_users({:points, :>, 90})
 
-    # 3 with 90 points and 3 with 91 points
-    assert 6 == Enum.count(result)
+    # 3 with 91 points
+    assert 3 == Enum.count(result)
   end
 
   test "find_users/2 using `limit` limits results" do
@@ -60,7 +60,7 @@ defmodule RngApi.UsersTest do
   test "lazy_update/2 allows to dynamically update entries" do
     Enum.each(1..100, fn _ -> Repo.insert!(User.create()) end)
 
-    result = Users.find_users({:points, :>=, 90})
+    result = Users.find_users({:points, :>, 90})
 
     assert 0 == Enum.count(result)
 
@@ -70,7 +70,7 @@ defmodule RngApi.UsersTest do
 
     Users.lazy_update({:all, []}, updater)
 
-    result = Users.find_users({:points, :>=, 90})
+    result = Users.find_users({:points, :>, 90})
     assert 100 == Enum.count(result)
   end
 end

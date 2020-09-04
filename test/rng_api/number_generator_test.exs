@@ -29,7 +29,7 @@ defmodule RngApi.NumberGeneratorTest do
     assert :gt == DateTime.compare(t4, t3)
   end
 
-  test "`run/0` returns only users whose `points` value is bigger than or equal to the internal max" do
+  test "`run/0` returns only users whose `points` value is bigger than the internal max" do
     Repo.delete_all(User)
 
     # The number generator should have a `max` between 0 and 100, so by having users with less than 0, they will never be fetched
@@ -50,7 +50,7 @@ defmodule RngApi.NumberGeneratorTest do
     assert {_, []} = run()
   end
 
-  test "`run/0` returns up to 2 users whose `points` value is bigger than or equal to the internal max" do
+  test "`run/0` returns up to 2 users whose `points` value is bigger than the internal max" do
     Repo.delete_all(User)
 
     # The number generator should have a `max` between 0 and 100, so by having users with less than 0, they will never be fetched

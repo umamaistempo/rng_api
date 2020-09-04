@@ -9,6 +9,7 @@ defmodule RngApi.Users do
 
   @type find_query ::
           {:points, :>=, integer}
+          | :all
 
   @type find_option ::
           :random
@@ -20,6 +21,7 @@ defmodule RngApi.Users do
 
   `query` can be any of:
     - `{:points, :>=, value}` where `value` is an integer. This will fetch users whose `points` is bigger than or equals to `value`.
+    - `:all`. Fetches all users on database
 
   Additionally, the following `options` can be provided:
     - `random` - Will sort the resultset randomly.
@@ -30,6 +32,38 @@ defmodule RngApi.Users do
     |> users_query(query)
     |> users_query_options(options)
     |> Repo.all()
+  end
+
+  defp lazy_find_users(query, query_options, stream_options) do
+    User
+    |> users_query(query)
+    |> users_query_options(query_options)
+    |> Repo.stream(stream_options)
+  end
+
+  @spec lazy_update(
+          {find_query, [find_option]},
+          (User.t() -> Ecto.Changeset.t(User.t())),
+          Keyword.t()
+        ) :: {:ok, non_neg_integer} | {:error, any}
+  @doc """
+  Executes `update_fun` lazily on users filtered by `query` and `query_options` and updates each row individually.
+
+  This operation is not optimized for frequent predictable runs.
+
+  `query` and `query_options` parameters are the same from `find_users/2`.
+
+  If the update operation fails for any reason, it will throw and the whole operation is cancelled.
+  """
+  def lazy_update({query, query_options}, update_fun, stream_options \\ [max_rows: 200]) do
+    Repo.transaction(fn ->
+      query
+      |> lazy_find_users(query_options, stream_options)
+      |> Enum.reduce(0, fn el, acc ->
+        Repo.update!(update_fun.(el))
+        acc + 1
+      end)
+    end)
   end
 
   defp users_query(query, {:points, :>=, value}),

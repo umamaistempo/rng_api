@@ -12,6 +12,8 @@ defmodule RngApi.NumberGenerator do
 
   @doc false
   def init(_) do
+    schedule_recurring_updates()
+
     timestamp = nil
     last_result = {nil, []}
     {max_number(), timestamp, last_result}
@@ -39,6 +41,15 @@ defmodule RngApi.NumberGenerator do
   defp now(),
     do: Time.utc_now()
 
-  defp update_users(),
-    do: []
+  defp schedule_recurring_updates(),
+    do: :timer.apply_interval(60_000, GenServer, :cast, [self(), :update])
+
+  defp update_users() do
+    updater = fn user ->
+      User.modify(user, %{points: Enum.random(0..100)})
+    end
+
+    # Updates every user on database one-by-one, setting their `points` attribute to a new random value
+    Users.lazy_update({:all, []}, updater)
+  end
 end
